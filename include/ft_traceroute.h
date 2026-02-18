@@ -89,7 +89,7 @@ void build_icmp_packet(struct icmphdr *icmp, uint16_t sequence, pid_t pid, int p
 //==================SEND=================//
 //=======================================//
 
-int send_packet(t_traceroute *traceroute);
+int send_packet_with_ttl(t_traceroute *traceroute, int ttl);
 
 //=======================================//
 //==================RECEIVE==============//
