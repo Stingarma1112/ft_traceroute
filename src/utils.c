@@ -28,3 +28,18 @@ int ft_strcmp(const char *s1, const char *s2) {
 	}
 	return s1[i] - s2[i];
 }
+
+void	*ft_memset(void *s, int c, size_t n) {
+	size_t	i;
+
+	i = 0;
+	while (i < n) {
+		((unsigned char *) s)[i] = c;
+		i++;
+	}
+	return (s);
+}
+
+void	ft_bzero(void *s, size_t n) {
+	ft_memset(s, 0, n);
+}
