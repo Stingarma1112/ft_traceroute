@@ -56,7 +56,7 @@ int main(int argc, char **argv) {
                 fprintf(stderr, "ft_traceroute: failed to send packet\n");
                 continue;
             }
-            int recv_result = receive_packet_for_hop(&traceroute, ttl, &sned_time, &rtt, &router_addr); //fonction a ajouter
+            int recv_result = receive_packet_for_hop(&traceroute, ttl, &send_time, &rtt, &router_addr); //fonction a ajouter
             if (recv_result == 0) {
                 //reponse ok
                 //Stock RTT traceroute.hops[ttl - 1].rtt[probe] = rtt;
