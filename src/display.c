@@ -1,4 +1,4 @@
-#include "../include/ft_ping.h"
+#include "../include/ft_traceroute.h"
 #include <math.h>
 
 void display_packet_received(t_ping *ping, double rtt, int ttl) {

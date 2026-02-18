@@ -1,4 +1,4 @@
-#include "../include/ft_ping.h"
+#include "../include/ft_traceroute.h"
 
 int resolve_hostname(t_ping * ping) {
 	struct addrinfo hints;

@@ -1,4 +1,4 @@
-#include "../include/ft_ping.h"
+#include "../include/ft_traceroute.h"
 
 #define ICMP_HEADER_SIZE 8
 

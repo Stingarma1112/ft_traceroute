@@ -1,5 +1,5 @@
-#ifndef FT_PING_H
-# define FT_PING_H
+#ifndef FT_TRACEROUTE_H
+# define FT_TRACEROUTE_H
 
 # include <stdio.h>
 # include <stdlib.h>
@@ -17,27 +17,28 @@
 # include <netdb.h>
 
 typedef struct s_options {
-	int verbose;
 	int help;
-	int quiet;
-	int count;
-	int deadline;
-	int ttl_value;
-	int packet_size;
+	int max_hops;
+	int probes_per_hop;
 } t_options;
 
 
 typedef struct s_stats {
 	unsigned int packets_send;
 	unsigned int packets_received;
-	double min_rtt;
-	double max_rtt;
-	double total_rtt;
-	double total_rtt_squared;
 	unsigned int errors;
+	int current_hop;
 } t_stats;
 
-typedef struct s_ping {
+typedef struct s_hop {
+	struct sockaddr_in router_addr;
+	char *hostname;
+	double rtt[3];
+	int received_count;
+	int is_destination;
+} t_hop;
+
+typedef struct s_traceroute {
 	t_options options;
 	t_stats stats;
 	char *target_host;
@@ -45,13 +46,15 @@ typedef struct s_ping {
 	int socket_fd;
 	uint16_t sequence;
 	pid_t pid;
-} t_ping;
+	t_hop *hops;
+	int max_hops;
+} t_traceroute;
 
 //=======================================//
 //==================PARSING==============//
 //=======================================//
 
-int parse_arguments(int argc, char **arv, t_ping *ping);
+int parse_arguments(int argc, char **arv, t_traceroute *traceroute);
 void print_usage(char *prog_name);
 void print_help(char *prog_name);
 
@@ -59,19 +62,20 @@ void print_help(char *prog_name);
 //==================DNS==================//
 //=======================================//
 
-int resolve_hostname(t_ping * ping);
+int resolve_hostname(t_traceroute *traceroute);
 
 //=======================================//
 //==================SOCKET===============//
 //=======================================//
 
-int create_socket(t_ping *ping);
+int create_socket(t_traceroute *traceroute);
 
 //=======================================//
 //==================UTILS================//
 //=======================================//
 
 uint16_t calculate_checksum(void *data, int len);
+int ft_strcmp(const char *s1, const char *s2);
 
 //=======================================//
 //==================ICMP=================//
@@ -83,20 +87,20 @@ void build_icmp_packet(struct icmphdr *icmp, uint16_t sequence, pid_t pid, int p
 //==================SEND=================//
 //=======================================//
 
-int send_packet(t_ping *ping);
+int send_packet(t_traceroute *traceroute);
 
 //=======================================//
 //==================RECEIVE==============//
 //=======================================//
 
-int receive_packet(t_ping *ping, struct timeval *send_time, double *rtt, int *ttl);
+int receive_packet(t_traceroute *traceroute, struct timeval *send_time, double *rtt, int *ttl);
 
 //=======================================//
 //==================DISPLAY==============//
 //=======================================//
 
-void display_packet_received(t_ping *ping, double rtt, int ttl);
-void display_stats(t_ping *ping);
+void display_packet_received(t_traceroute *traceroute, double rtt, int ttl);
+void display_stats(t_traceroute *traceroute);
 
 //=======================================//
 //==================STATS================//

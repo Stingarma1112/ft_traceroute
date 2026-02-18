@@ -1,4 +1,4 @@
-#include "../include/ft_ping.h"
+#include "../include/ft_traceroute.h"
 
 void init_stats(t_stats *stats) {
 	stats->packets_send = 0;

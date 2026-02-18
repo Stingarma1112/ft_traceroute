@@ -1,8 +1,8 @@
 # ===============================
-#  Makefile — ft_ping
+#  Makefile — ft_traceroute
 # ===============================
 
-NAME 	:= ft_ping
+NAME 	:= ft_traceroute
 
 SRC_DIR := src
 INC_DIR := include

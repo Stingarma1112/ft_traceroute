@@ -40,7 +40,7 @@ Ce document présente l'analyse des modifications nécessaires pour transformer 
 - `include/ft_ping.h` : Renommer en `ft_traceroute.h` et mettre à jour les gardes
 - Tous les fichiers source : Mettre à jour les includes
 
-**Justification** : Le sujet exige un exécutable nommé `ft_traceroute`.
+**Justification** : Le sujet exige un exécutable nommé `ft_traceroute`. ======================================= OK
 
 ---
 

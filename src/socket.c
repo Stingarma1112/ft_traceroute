@@ -1,4 +1,4 @@
-#include "../include/ft_ping.h"
+#include "../include/ft_traceroute.h"
 
 int create_socket(t_ping *ping) {
 	int sockfd;

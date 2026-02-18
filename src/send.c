@@ -1,4 +1,4 @@
-#include "../include/ft_ping.h"
+#include "../include/ft_traceroute.h"
 
 int send_packet(t_ping *ping) {
 	int packet_size;

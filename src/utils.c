@@ -1,4 +1,4 @@
-#include "../include/ft_ping.h"
+#include "../include/ft_traceroute.h"
 
 uint16_t calculate_checksum(void *data, int len) {
 
@@ -16,4 +16,15 @@ uint16_t calculate_checksum(void *data, int len) {
 		sum = (sum & 0xFFFF) + (sum >> 16);
 	}
 	return (~sum);
+}
+
+int ft_strcmp(const char *s1, const char *s2) {
+	int i = 0;
+	while (s1[i] && s2[i]) {
+		if (s1[i] != s2[i]) {
+			return s1[i] - s2[i];
+		}
+		i++;
+	}
+	return s1[i] - s2[i];
 }

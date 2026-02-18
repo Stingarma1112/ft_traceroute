@@ -1,4 +1,4 @@
-#include "../include/ft_ping.h"
+#include "../include/ft_traceroute.h"
 
 #define PACKET_SIZE_MAX 65535
 #define IP_HEADER_SIZE 20
