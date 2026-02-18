@@ -1,0 +1,64 @@
+PROJET UNIX : FT_TRACEROUTE
+Version : 4.4
+
+--- RÉSUMÉ ---
+Ce projet consiste à recoder la commande traceroute pour mieux comprendre le fonctionnement de votre réseau.
+
+--- TABLE DES MATIÈRES ---
+I.   Préambule
+II.  Introduction
+III. Objectifs
+IV.  Partie obligatoire
+V.   Partie bonus
+VI.  Saisie et évaluation par les pairs
+
+--- I. PRÉAMBULE ---
+Paul Adrien Maurice Dirac (08/08/1902 - 20/10/1984) était un physicien et mathématicien britannique, considéré comme l'un des pères de la mécanique quantique. Il a prédit l'existence de l'antimatière et a reçu le prix Nobel de physique en 1933 avec Erwin Schrödinger.
+
+Élève brillant, il a étudié les mathématiques et la physique dès son plus jeune âge. En 1925, il a publié des documents majeurs sur la mécanique statistique et la physique quantique atomique. Il est notamment connu pour avoir prouvé l'équivalence physique de la mécanique ondulatoire et de la mécanique matricielle, ainsi que pour l'analogie des pêcheurs en mécanique hamiltonienne.
+
+--- II. INTRODUCTION ---
+Traceroute (ou tracert sur Windows) est un utilitaire permettant de suivre l'itinéraire qu'un paquet de données (paquets IP) suit d'une machine locale à une autre connectée au même réseau IP. Il a été conçu au sein du Lawrence-Berkeley National Laboratory.
+
+--- III. OBJECTIFS ---
+Le but est de recoder la commande traceroute. Vous pouvez vous référer au manuel via la commande : $> man traceroute.
+
+--- IV. PARTIE OBLIGATOIRE ---
+* Nom de l'exécutable : ft_traceroute.
+* Langage : C.
+* Makefile : Obligatoire, respectant les règles habituelles.
+* Option à gérer : Uniquement --help.
+* Paramètres : Doit gérer une adresse IPv4 simple (adresse IP ou nom d'hôte).
+* FQDN : Vous devez gérer le FQDN sans exécuter la résolution DNS dans l'affichage des sauts (jumps).
+* Tolérance : Une différence de +/- 30ms sur un saut est tolérée.
+* Interdictions : Les fonctions fcntl, poll et ppoll sont strictement interdites.
+* Indentation : Le résultat doit avoir la même indentation que le vrai traceroute.
+
+Fonctions autorisées :
+- getpid / getuid
+- getaddrinfo / gettimeofday
+- getnameinfo / gethostbyaddr
+- inet_ntoa / inet_pton
+- freeaddrinfo
+- exit / select
+- setsockopt
+- recvfrom / sendto
+- ntohs / htons
+- bind / socket / close
+- strerror / gai_strerror
+- Fonctions de type printf
+- Fonctions autorisées dans votre libft (read, write, malloc, free)
+
+Note : Vous ne pouvez évidemment pas appeler le vrai binaire traceroute !
+
+--- V. PARTIE BONUS ---
+La partie bonus ne sera évaluée que si la partie obligatoire est PARFAITE (sans aucun dysfonctionnement). Vous pouvez ajouter jusqu'à 5 bonus, par exemple :
+* Gestion DNS complète.
+* Ajout de flags supplémentaires (-i, -m, -p, -s, -q, -N, -t, etc.).
+* L'utilisation d'autres fonctions est autorisée si elle est justifiée lors de l'évaluation.
+* Attention : Le flag -V n'est pas considéré comme un bonus valide.
+
+--- VI. SOUMISSION ET ÉVALUATION ---
+* Le projet doit être déposé sur votre dépôt Git.
+* L'évaluation se fera sur une VM avec un noyau Linux >= 4.0 (le barème a été conçu sur Debian 7.0 64 bits).
+* Gestion des erreurs : Le programme doit gérer les erreurs de manière raisonnable et ne jamais quitter de manière inattendue (Segmentation fault, etc.).
