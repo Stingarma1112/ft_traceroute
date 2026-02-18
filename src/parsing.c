@@ -10,7 +10,7 @@ int parse_arguments(int argc, char **argv, t_traceroute *traceroute) {
 	for (i = 1; i < argc; i++) {
 		if (ft_strcmp(argv[i], "--help") == 0) {
 			traceroute->options.help = 1;
-		} else if (ft_strcmp(argv[i][0] ==  '-')){
+		} else if (argv[i][0] ==  '-'){
 			fprintf(stderr, "ft_traceroute: invalid option -- '%s'\n", argv[i]);
 			fprintf(stderr, "Try 'ft_traceroute --help' for more information.\n");
 			return 1;
