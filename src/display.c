@@ -10,11 +10,11 @@ void display_header(t_traceroute *traceroute) {
 
 void display_hop(t_traceroute *traceroute, int ttl) {
 	t_hop *hop;
-	char ip_str[INET_ADDRSTRELEN];
+	char ip_str[INET_ADDRSTRLEN];
 	int i;
 
 	hop = &traceroute->hops[ttl - 1];
-	printf("%2d ", ttl);
+	printf("%2d  ", ttl);
 
 	for (i = 0; i < traceroute->options.probes_per_hop; i++) {
 		if (hop->rtt[i] >= 0) {
@@ -23,7 +23,7 @@ void display_hop(t_traceroute *traceroute, int ttl) {
 				printf("%s (%s) ", hop->hostname[i], ip_str);
 			else
 				printf("%s (%s) ", ip_str, ip_str);
-			printf("%.3f ms ", hop->rtt[i]);
+			printf(" %.3f ms ", hop->rtt[i]);
 		}
 		else
 			printf("* ");
