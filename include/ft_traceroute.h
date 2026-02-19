@@ -95,7 +95,7 @@ int send_packet_with_ttl(t_traceroute *traceroute, int ttl);
 //==================RECEIVE==============//
 //=======================================//
 
-int receive_packet_for_hop(t_traceroute *traceroute, struct timeval *send_time, double *rtt, int *ttl);
+int receive_packet_for_hop(t_traceroute *traceroute, int ttl, struct timeval *send_time, double *rtt, struct sockaddr_in *router_addr);
 
 //=======================================//
 //==================DISPLAY==============//
