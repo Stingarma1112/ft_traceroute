@@ -15,6 +15,7 @@
 # include <sys/time.h>
 # include <errno.h>
 # include <netdb.h>
+# include <math.h>
 
 typedef struct s_options {
 	int help;
@@ -31,8 +32,8 @@ typedef struct s_stats {
 } t_stats;
 
 typedef struct s_hop {
-	struct sockaddr_in router_addr;
-	char *hostname;
+	struct sockaddr_in router_addr[3];
+	char *hostname[3];
 	double rtt[3];
 	int received_count;
 	int is_destination;
@@ -101,8 +102,9 @@ int receive_packet_for_hop(t_traceroute *traceroute, int ttl, struct timeval *se
 //==================DISPLAY==============//
 //=======================================//
 
-void display_packet_received(t_traceroute *traceroute, double rtt, int ttl);
 void display_stats(t_traceroute *traceroute);
+void display_header(t_traceroute *traceroute);
+void display_hop(t_traceroute *traceroute, int ttl);
 
 //=======================================//
 //==================STATS================//

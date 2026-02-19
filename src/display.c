@@ -1,50 +1,36 @@
 #include "../include/ft_traceroute.h"
-#include <math.h>
+#define PACKET_SIZE_DISPLAY 60
 
-void display_packet_received(t_ping *ping, double rtt, int ttl) {
-
-	if (ping->options.quiet)
-		return;
-
+void display_header(t_traceroute *traceroute) {
 	char ip_str[INET_ADDRSTRLEN];
-	inet_ntop(AF_INET, &ping->target_addr.sin_addr, ip_str, INET_ADDRSTRLEN);
-	printf("%d bytes from %s: icmp_seq=%d ttl=%d time=%.3f ms\n", ping->options.packet_size, ip_str, ping->sequence, ttl, rtt);
+
+	inet_ntop(AF_INET, &traceroute->target_addr.sin_addr, ip_str, INET_ADDRSTRLEN);
+	printf("ft_traceroute to %s (%s), %d hops max, %d byte packets\n", traceroute->target_host, ip_str, traceroute->options.max_hops, PACKET_SIZE_DISPLAY);
 }
 
-void display_stats(t_ping *ping) {
-	char ip_str[INET_ADDRSTRLEN];
-	double packet_loss;
-	double average_rtt;
-	double stddev = 0.0;
+void display_hop(t_traceroute *traceroute, int ttl) {
+	t_hop *hop;
+	char ip_str[INET_ADDRSTRELEN];
+	int i;
 
-	inet_ntop(AF_INET, &ping->target_addr.sin_addr, ip_str, INET_ADDRSTRLEN);
+	hop = &traceroute->hops[ttl - 1];
+	printf("%2d ", ttl);
 
-	printf("--- %s ping statistics ---\n", ping->target_host);
-	printf("%d packets transmitted, %d packets received", ping->stats.packets_send, ping->stats.packets_received);
-
-	if (ping->stats.errors > 0) {
-		printf(", %d errors", ping->stats.errors);
-	}
-
-	if (ping->stats.packets_send > 0) {
-		packet_loss = ((double)(ping->stats.packets_send - ping->stats.packets_received) / ping->stats.packets_send) * 100;
-		printf(", %.0f%% packet loss", packet_loss);
-	}
-
-	printf("\n");
-
-	if (ping->stats.packets_received > 0) {
-		average_rtt = ping->stats.total_rtt / ping->stats.packets_received;
-
-		if (ping->stats.packets_received > 1) {
-			double mean_squared = (ping->stats.total_rtt_squared / ping->stats.packets_received);
-			double variance = mean_squared - (average_rtt * average_rtt);
-			if (variance > 0) {
-				stddev = sqrt(variance);
-			}
+	for (i = 0; i < traceroute->options.probes_per_hop; i++) {
+		if (hop->rtt[i] >= 0) {
+			inet_ntop(AF_INET, &hop->router_addr[i].sin_addr, ip_str, INET_ADDRSTRLEN);
+			if (hop->hostname[i])
+				printf("%s (%s) ", hop->hostname[i], ip_str);
+			else
+				printf("%s (%s) ", ip_str, ip_str);
+			printf("%.3f ms ", hop->rtt[i]);
 		}
-
-		printf("round-trip min/avg/max/stddev = %.3f/%.3f/%.3f/%.3f ms\n",
-		       ping->stats.min_rtt, average_rtt, ping->stats.max_rtt, stddev);
+		else
+			printf("* ");
 	}
+	printf("\n");
+}
+
+void display_stats(t_traceroute *traceroute) {
+	(void)traceroute;
 }
