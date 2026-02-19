@@ -5,6 +5,7 @@
 
 int receive_packet_for_hop(t_traceroute *traceroute, int ttl, struct timeval *send_time, double *rtt, struct sockaddr_in *router_addr) {
 
+	(void)ttl;
 	char buffer[PACKET_SIZE_MAX];
 	struct iphdr *ip_header;
 	struct icmphdr *icmp_reply;
