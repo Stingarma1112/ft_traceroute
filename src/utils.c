@@ -56,3 +56,17 @@ void	*ft_memcpy(void *dest, const void *src, size_t n) {
 	}	
 	return ((void *)dest);
 }
+
+size_t	ft_strcpy(char *dst, const char *src)
+{
+	size_t	i;
+
+	i = 0;
+	while (src[i])
+	{
+		dst[i] = src[i];
+		i++;
+	}
+	dst[i] = '\0';
+	return (i);
+}

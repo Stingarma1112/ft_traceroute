@@ -64,6 +64,7 @@ void print_help(char *prog_name);
 //=======================================//
 
 int resolve_hostname(t_traceroute *traceroute);
+char *resolve_router_hostname(struct sockaddr_in *addr);
 
 //=======================================//
 //==================SOCKET===============//
@@ -80,6 +81,7 @@ int ft_strcmp(const char *s1, const char *s2);
 void	*ft_memset(void *s, int c, size_t n);
 void	ft_bzero(void *s, size_t n);
 void	*ft_memcpy(void *dest, const void *src, size_t n);
+size_t	ft_strcpy(char *dst, const char *src);
 
 //=======================================//
 //==================ICMP=================//

@@ -34,3 +34,29 @@ int resolve_hostname(t_traceroute *traceroute) {
 	}
 	return 0;
 }
+
+char *resolve_router_hostname(struct sockaddr_in *addr) {
+	static char hostname[NI_MAXHOST];
+	char ip_str[INET_ADDRSTRLEN];
+	int ret;
+
+	ret = getnameinfo((struct sockaddr *)addr, sizeof(struct sockaddr_in), hostname, NI_MAXHOST, NULL, 0, NI_NAMEREQD);
+	if (ret == 0 && hostname[0] != '\0') {
+		char *result = malloc(strlen(hostname) + 1);
+		if (result)
+			ft_strcpy(result, hostname);
+		return result;
+	}
+
+	inet_ntop(AF_INET, &addr->sin_addr, ip_str, INET_ADDRSTRLEN);
+	struct hostent *host = gethostbyaddr(&addr->sin_addr, sizeof(addr->sin_addr), AF_INET);
+	if (host && host->h_name) {
+		char *result = malloc(strlen(host->h_name) + 1);
+		if (!result)
+			return NULL;
+		if (result)
+			ft_strcpy(result, host->h_name);
+		return result;
+	}
+	return NULL;
+}
