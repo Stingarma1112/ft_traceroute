@@ -10,18 +10,17 @@ void display_header(t_traceroute *traceroute) {
 
 void display_hop(t_traceroute *traceroute, int ttl) {
 	t_hop *hop;
-	char ip_str[INET_ADDRSTRLEN];
 	char *display_hostname = NULL;
 	char display_ip[INET_ADDRSTRLEN];
 	int i;
-	int first_valid = 1;
+	int first_valid = -1;
 
 	hop = &traceroute->hops[ttl - 1];
 	printf("%2d  ", ttl);
 
 	for (i = 0; i < traceroute->options.probes_per_hop; i++) {
 		if (hop->rtt[i] >= 0) {
-			first_valid = 0;
+			first_valid = 1;
 			break;
 		}
 	}
