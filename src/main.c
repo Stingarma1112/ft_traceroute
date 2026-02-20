@@ -78,6 +78,7 @@ int main(int argc, char **argv) {
                traceroute.hops[ttl - 1].router_addr[probe] = router_addr;
                traceroute.hops[ttl - 1].rtt[probe] = rtt;
                traceroute.hops[ttl - 1].received_count++;
+               traceroute.hops[ttl - 1].hostname[probe] = resolve_router_hostname(&router_addr);
             } else if (recv_result == -1) {
                 //timeout
             } else if (recv_result == 1) {
@@ -99,6 +100,12 @@ int main(int argc, char **argv) {
         display_hop(&traceroute, ttl);
         if (destination_reached)
             break;
+    }
+    for (int i = 0; i < traceroute.max_hops; i++) {
+        for (int j = 0; j < 3; j++) {
+            if (traceroute.hops[i].hostname[j])
+                free(traceroute.hops[i].hostname[j]);
+        }
     }
     free(traceroute.hops);
     return 0;
