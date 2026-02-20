@@ -11,22 +11,36 @@ void display_header(t_traceroute *traceroute) {
 void display_hop(t_traceroute *traceroute, int ttl) {
 	t_hop *hop;
 	char ip_str[INET_ADDRSTRLEN];
+	char *display_hostname = NULL;
+	char display_ip[INET_ADDRSTRLEN];
 	int i;
+	int first_valid = 1;
 
 	hop = &traceroute->hops[ttl - 1];
 	printf("%2d  ", ttl);
 
 	for (i = 0; i < traceroute->options.probes_per_hop; i++) {
 		if (hop->rtt[i] >= 0) {
-			inet_ntop(AF_INET, &hop->router_addr[i].sin_addr, ip_str, INET_ADDRSTRLEN);
-			if (hop->hostname[i])
-				printf("%s (%s) ", hop->hostname[i], ip_str);
-			else
-				printf("%s (%s) ", ip_str, ip_str);
-			printf(" %.3f ms ", hop->rtt[i]);
+			first_valid = 0;
+			break;
 		}
+	}
+
+	if (first_valid >= 0) {
+		inet_ntop(AF_INET, &hop->router_addr[first_valid].sin_addr, display_ip, INET_ADDRSTRLEN);
+		display_hostname = hop->hostname[first_valid];
+		if (display_hostname)
+			printf("%s (%s) ", display_hostname, display_ip);
 		else
-			printf("* ");
+			printf("%s ", display_ip);
+	}
+
+	for (i = 0; i < traceroute->options.probes_per_hop; i++) {
+		if (hop->rtt[i] >= 0) {
+			printf(" %.3f ms", hop->rtt[i]);
+		} else {
+			printf(" *");
+		}
 	}
 	printf("\n");
 }
