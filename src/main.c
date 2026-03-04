@@ -10,6 +10,8 @@ void signal_handler(int sig) {
             free(g_traceroute->hops);
         if (g_traceroute->socket_fd > 0)
             close(g_traceroute->socket_fd);
+        if (g_traceroute->send_socket_fd > 0)
+            close(g_traceroute->send_socket_fd);
         exit(0);
     }
 }
@@ -68,12 +70,15 @@ int main(int argc, char **argv) {
     for (ttl = 1; ttl <= traceroute.options.max_hops; ttl++) {
         traceroute.stats.current_hop = ttl;
         for (probe = 0; probe < traceroute.options.probes_per_hop; probe++) {
+            uint16_t expected_seq;
+
             gettimeofday(&send_time, NULL);
+            expected_seq = traceroute.sequence;
             if (send_packet_with_ttl(&traceroute, ttl) != 0) {
                 fprintf(stderr, "ft_traceroute: failed to send packet\n");
                 continue;
             }
-            int recv_result = receive_packet_for_hop(&traceroute, ttl, &send_time, &rtt, &router_addr);
+            int recv_result = receive_packet_for_hop(&traceroute, ttl, &send_time, &rtt, &router_addr, expected_seq);
             if (recv_result == 0) {
                traceroute.hops[ttl - 1].router_addr[probe] = router_addr;
                traceroute.hops[ttl - 1].rtt[probe] = rtt;
@@ -85,16 +90,16 @@ int main(int argc, char **argv) {
                 traceroute.hops[ttl - 1].router_addr[probe] = router_addr;
                 traceroute.hops[ttl - 1].rtt[probe] = rtt;
                 traceroute.hops[ttl - 1].received_count++;
+                traceroute.hops[ttl - 1].hostname[probe] = resolve_router_hostname(&router_addr);
                 traceroute.hops[ttl - 1].is_destination = 1;
                 destination_reached = 1;
-                break;
             } else if (recv_result == 2) {
                 traceroute.hops[ttl - 1].router_addr[probe] = router_addr;
                 traceroute.hops[ttl - 1].rtt[probe] = rtt;
                 traceroute.hops[ttl - 1].received_count++;
+                traceroute.hops[ttl - 1].hostname[probe] = resolve_router_hostname(&router_addr);
                 traceroute.hops[ttl - 1].is_destination = 1;
                 destination_reached = 1;
-                break;
             }
         }
         display_hop(&traceroute, ttl);
@@ -107,6 +112,8 @@ int main(int argc, char **argv) {
                 free(traceroute.hops[i].hostname[j]);
         }
     }
+    if (traceroute.send_socket_fd > 0)
+        close(traceroute.send_socket_fd);
     free(traceroute.hops);
     return 0;
 }

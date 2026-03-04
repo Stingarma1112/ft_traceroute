@@ -10,12 +10,15 @@
 # include <netinet/in.h>
 # include <netinet/ip.h>
 # include <netinet/ip_icmp.h>
+# include <netinet/udp.h>
 # include <arpa/inet.h>
 # include <signal.h>
 # include <sys/time.h>
 # include <errno.h>
 # include <netdb.h>
 # include <math.h>
+
+# define TR_UDP_BASE_PORT 33434
 
 typedef struct s_options {
 	int help;
@@ -45,6 +48,7 @@ typedef struct s_traceroute {
 	char *target_host;
 	struct sockaddr_in target_addr;
 	int socket_fd;
+	int send_socket_fd;
 	uint16_t sequence;
 	pid_t pid;
 	t_hop *hops;
@@ -99,7 +103,7 @@ int send_packet_with_ttl(t_traceroute *traceroute, int ttl);
 //==================RECEIVE==============//
 //=======================================//
 
-int receive_packet_for_hop(t_traceroute *traceroute, int ttl, struct timeval *send_time, double *rtt, struct sockaddr_in *router_addr);
+int receive_packet_for_hop(t_traceroute *traceroute, int ttl, struct timeval *send_time, double *rtt, struct sockaddr_in *router_addr, uint16_t expected_seq);
 
 //=======================================//
 //==================DISPLAY==============//
