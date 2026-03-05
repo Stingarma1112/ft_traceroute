@@ -36,7 +36,6 @@ int parse_arguments(int argc, char **argv, t_traceroute *traceroute) {
 
 void print_usage(char *prog_name) {
 	printf("Usage: %s [OPTION...] HOST ...\n", prog_name);
-	printf("Send ICMP TIME_EXCEEDED packets to network hosts\n");
 	printf("  --help         give this help list\n\n");
 }
 

@@ -70,3 +70,12 @@ size_t	ft_strcpy(char *dst, const char *src)
 	dst[i] = '\0';
 	return (i);
 }
+
+size_t ft_strlen(const char *s) {
+	size_t i = 0;
+
+	while (s[i]) {
+		i++;
+	}
+	return (i);
+}

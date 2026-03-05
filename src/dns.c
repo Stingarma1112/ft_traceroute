@@ -52,7 +52,7 @@ char *resolve_router_hostname(struct sockaddr_in *addr) {
 
 	struct hostent *host = gethostbyaddr(&addr->sin_addr, sizeof(addr->sin_addr), AF_INET);
 	if (host && host->h_name) {
-		char *result = malloc(strlen(host->h_name) + 1);
+		char *result = malloc(ft_strlen(host->h_name) + 1);
 		if (!result)
 			return NULL;
 		if (result)
