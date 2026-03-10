@@ -24,12 +24,12 @@ static int matches_original_probe(t_traceroute *traceroute, char *buffer, ssize_
 	if (received < (ssize_t)(offset + (int)sizeof(struct udphdr)))
 		return 0;
 	original_udp = (struct udphdr *)(buffer + offset);
-	if (ntohs(original_udp->dest) != (uint16_t)(TR_UDP_BASE_PORT + expected_seq))
+	if (ntohs(original_udp->dest) != (uint16_t)(traceroute->options.base_port + expected_seq))
 		return 0;
 	return 1;
 }
 
-int receive_packet_for_hop(t_traceroute *traceroute, int ttl, struct timeval *send_time, double *rtt, struct sockaddr_in *router_addr, uint16_t expected_seq) {
+int receive_packet_for_hop(t_traceroute *traceroute, int ttl, struct timeval *send_time, struct timeval *hop_start_time, double *rtt, struct sockaddr_in *router_addr, uint16_t expected_seq) {
 
 	(void)ttl;
 	char			buffer[PACKET_SIZE_MAX];
@@ -49,8 +49,8 @@ int receive_packet_for_hop(t_traceroute *traceroute, int ttl, struct timeval *se
 
 	while (1) {
 		gettimeofday(&now, NULL);
-		elapsed_ms = (now.tv_sec - send_time->tv_sec) * 1000.0 + (now.tv_usec - send_time->tv_usec) / 1000.0;
-		remaining_ms = 5000.0 - elapsed_ms;
+		elapsed_ms = (now.tv_sec - hop_start_time->tv_sec) * 1000.0 + (now.tv_usec - hop_start_time->tv_usec) / 1000.0;
+		remaining_ms = (double)traceroute->options.timeout_ms - elapsed_ms;
 		if (remaining_ms <= 0.0)
 			return -1;
 		timeout.tv_sec = (int)(remaining_ms / 1000.0);

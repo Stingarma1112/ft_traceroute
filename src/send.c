@@ -11,7 +11,7 @@ int send_packet_with_ttl(t_traceroute *traceroute, int ttl) {
 		return 1;
 	}
 	dest_addr = traceroute->target_addr;
-	dest_port = (uint16_t)(TR_UDP_BASE_PORT + traceroute->sequence);
+	dest_port = (uint16_t)(traceroute->options.base_port + traceroute->sequence);
 	dest_addr.sin_port = htons(dest_port);
 	ft_bzero(payload, sizeof(payload));
 	sent = sendto(traceroute->send_socket_fd, payload, sizeof(payload), 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));

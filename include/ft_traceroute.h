@@ -19,11 +19,14 @@
 # include <math.h>
 
 # define TR_UDP_BASE_PORT 33434
+# define TR_MAX_PROBES 10
 
 typedef struct s_options {
 	int help;
 	int max_hops;
 	int probes_per_hop;
+	int timeout_ms;
+	int base_port;
 } t_options;
 
 
@@ -35,9 +38,9 @@ typedef struct s_stats {
 } t_stats;
 
 typedef struct s_hop {
-	struct sockaddr_in router_addr[3];
-	char *hostname[3];
-	double rtt[3];
+	struct sockaddr_in router_addr[TR_MAX_PROBES];
+	char *hostname[TR_MAX_PROBES];
+	double rtt[TR_MAX_PROBES];
 	int received_count;
 	int is_destination;
 } t_hop;
@@ -104,7 +107,7 @@ int send_packet_with_ttl(t_traceroute *traceroute, int ttl);
 //==================RECEIVE==============//
 //=======================================//
 
-int receive_packet_for_hop(t_traceroute *traceroute, int ttl, struct timeval *send_time, double *rtt, struct sockaddr_in *router_addr, uint16_t expected_seq);
+int receive_packet_for_hop(t_traceroute *traceroute, int ttl, struct timeval *send_time, struct timeval *hop_start_time, double *rtt, struct sockaddr_in *router_addr, uint16_t expected_seq);
 
 //=======================================//
 //==================DISPLAY==============//

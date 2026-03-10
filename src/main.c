@@ -39,8 +39,8 @@ int main(int argc, char **argv) {
         return 1;
     }
     struct timeval timeout;
-    timeout.tv_sec = 5;
-    timeout.tv_usec = 0;
+    timeout.tv_sec = traceroute.options.timeout_ms / 1000;
+    timeout.tv_usec = (traceroute.options.timeout_ms % 1000) * 1000;
     if (setsockopt(traceroute.socket_fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout)) < 0) {
         perror("ft_traceroute: setsockopt: SO_RCVTIMEO");
     }
@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
     }
     for (int i = 0; i < traceroute.max_hops; i++) {
         ft_bzero(&traceroute.hops[i], sizeof(t_hop));
-        for (int j = 0; j < 3; j++) {
+        for (int j = 0; j < traceroute.options.probes_per_hop; j++) {
             traceroute.hops[i].rtt[j] = -1.0;
             traceroute.hops[i].hostname[j] = NULL;
         }
@@ -64,11 +64,13 @@ int main(int argc, char **argv) {
     int probe;
     int destination_reached = 0;
     struct timeval send_time;
+    struct timeval hop_start_time;
     double rtt;
     struct sockaddr_in router_addr;
 
     for (ttl = 1; ttl <= traceroute.options.max_hops; ttl++) {
         traceroute.stats.current_hop = ttl;
+        gettimeofday(&hop_start_time, NULL);
         for (probe = 0; probe < traceroute.options.probes_per_hop; probe++) {
             uint16_t expected_seq;
 
@@ -78,7 +80,7 @@ int main(int argc, char **argv) {
                 fprintf(stderr, "ft_traceroute: failed to send packet\n");
                 continue;
             }
-            int recv_result = receive_packet_for_hop(&traceroute, ttl, &send_time, &rtt, &router_addr, expected_seq);
+            int recv_result = receive_packet_for_hop(&traceroute, ttl, &send_time, &hop_start_time, &rtt, &router_addr, expected_seq);
             if (recv_result == 0) {
                traceroute.hops[ttl - 1].router_addr[probe] = router_addr;
                traceroute.hops[ttl - 1].rtt[probe] = rtt;
@@ -107,7 +109,7 @@ int main(int argc, char **argv) {
             break;
     }
     for (int i = 0; i < traceroute.max_hops; i++) {
-        for (int j = 0; j < 3; j++) {
+        for (int j = 0; j < traceroute.options.probes_per_hop; j++) {
             if (traceroute.hops[i].hostname[j])
                 free(traceroute.hops[i].hostname[j]);
         }
