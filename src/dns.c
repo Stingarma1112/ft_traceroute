@@ -44,7 +44,7 @@ char *resolve_router_hostname(struct sockaddr_in *addr) {
 
 	ret = getnameinfo((struct sockaddr *)addr, sizeof(struct sockaddr_in), hostname, NI_MAXHOST, NULL, 0, NI_NAMEREQD);
 	if (ret == 0 && hostname[0] != '\0') {
-		char *result = malloc(strlen(hostname) + 1);
+		char *result = malloc(ft_strlen(hostname) + 1);
 		if (result)
 			ft_strcpy(result, hostname);
 		return result;

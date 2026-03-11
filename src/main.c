@@ -2,16 +2,39 @@
 
 static t_traceroute *g_traceroute = NULL;
 
+static void cleanup_traceroute(t_traceroute *traceroute) {
+    int probes;
+
+    if (traceroute == NULL)
+        return;
+    probes = traceroute->options.probes_per_hop;
+    if (probes <= 0 || probes > TR_MAX_PROBES)
+        probes = TR_MAX_PROBES;
+    if (traceroute->hops != NULL) {
+        for (int i = 0; i < traceroute->max_hops; i++) {
+            for (int j = 0; j < probes; j++) {
+                if (traceroute->hops[i].hostname[j] != NULL)
+                    free(traceroute->hops[i].hostname[j]);
+            }
+        }
+        free(traceroute->hops);
+        traceroute->hops = NULL;
+    }
+    if (traceroute->socket_fd >= 0) {
+        close(traceroute->socket_fd);
+        traceroute->socket_fd = -1;
+    }
+    if (traceroute->send_socket_fd >= 0) {
+        close(traceroute->send_socket_fd);
+        traceroute->send_socket_fd = -1;
+    }
+}
+
 void signal_handler(int sig) {
     (void)sig;
     if (g_traceroute != NULL) {
         display_stats(g_traceroute);
-        if (g_traceroute->hops != NULL)
-            free(g_traceroute->hops);
-        if (g_traceroute->socket_fd > 0)
-            close(g_traceroute->socket_fd);
-        if (g_traceroute->send_socket_fd > 0)
-            close(g_traceroute->send_socket_fd);
+        cleanup_traceroute(g_traceroute);
         exit(0);
     }
 }
@@ -23,6 +46,8 @@ int main(int argc, char **argv) {
     traceroute.pid = getpid();
     traceroute.sequence = 0;
     traceroute.stats.current_hop = 0;
+    traceroute.socket_fd = -1;
+    traceroute.send_socket_fd = -1;
     g_traceroute = &traceroute;
     signal(SIGINT, signal_handler);
 
@@ -49,13 +74,13 @@ int main(int argc, char **argv) {
     traceroute.hops = malloc(traceroute.max_hops * sizeof(t_hop));
     if (!traceroute.hops) {
         perror("ft_traceroute: error allocating memory for hops");
+        cleanup_traceroute(&traceroute);
         return 1;
     }
+    ft_bzero(traceroute.hops, traceroute.max_hops * sizeof(t_hop));
     for (int i = 0; i < traceroute.max_hops; i++) {
-        ft_bzero(&traceroute.hops[i], sizeof(t_hop));
         for (int j = 0; j < traceroute.options.probes_per_hop; j++) {
             traceroute.hops[i].rtt[j] = -1.0;
-            traceroute.hops[i].hostname[j] = NULL;
         }
     }
     display_header(&traceroute);
@@ -108,14 +133,6 @@ int main(int argc, char **argv) {
         if (destination_reached)
             break;
     }
-    for (int i = 0; i < traceroute.max_hops; i++) {
-        for (int j = 0; j < traceroute.options.probes_per_hop; j++) {
-            if (traceroute.hops[i].hostname[j])
-                free(traceroute.hops[i].hostname[j]);
-        }
-    }
-    if (traceroute.send_socket_fd > 0)
-        close(traceroute.send_socket_fd);
-    free(traceroute.hops);
+    cleanup_traceroute(&traceroute);
     return 0;
 }

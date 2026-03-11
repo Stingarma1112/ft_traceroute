@@ -146,10 +146,10 @@ int parse_arguments(int argc, char **argv, t_traceroute *traceroute) {
 void print_usage(char *prog_name) {
 	printf("Usage: %s [OPTION...] HOST ...\n", prog_name);
 	printf("  --help         give this help list\n");
-	printf("  -m NUM         set max hop count (1..255)\n");
-	printf("  -q NUM         set number of probes per hop (1..%d)\n", TR_MAX_PROBES);
-	printf("  -w NUM         set timeout per probe in seconds (1..60)\n");
-	printf("  -p NUM         set UDP base destination port (1..65535)\n\n");
+	printf("  -m             set max hop count (1..255)\n");
+	printf("  -q             set number of probes per hop (1..%d)\n", TR_MAX_PROBES);
+	printf("  -w             set timeout per probe in seconds (1..60)\n");
+	printf("  -p             set UDP base destination port (1..65535)\n\n");
 }
 
 void print_help(char *prog_name) {
